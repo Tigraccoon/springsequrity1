@@ -27,12 +27,12 @@ public class SecurityConfig {
       .password("{noop}1234")
       .roles("USER")
       .build();
-    
+
     UserDetails sys = User
       .builder()
       .username("sys")
       .password("{noop}1234")
-      .roles("SYS")
+      .roles("SYS", "USER")
       .build();
 
     UserDetails admin = User
@@ -49,6 +49,12 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
     http
       .authorizeHttpRequests((authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
+        .requestMatchers("/user")
+        .hasRole("USER")
+        .requestMatchers("/admin/pay")
+        .hasRole("ADMIN")
+        .requestMatchers("/admin/**")
+        .hasAnyRole("ADMIN", "SYS")
         .anyRequest()
         .authenticated()))
       .formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer

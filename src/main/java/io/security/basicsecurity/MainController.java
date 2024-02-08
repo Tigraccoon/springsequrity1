@@ -15,4 +15,19 @@ public class MainController {
   public String loginPage () {
     return "loginPage";
   }
+
+  @GetMapping("/admin")
+  public String admin () {
+    return "admin";
+  }
+
+  @GetMapping("/admin/**")
+  public String adminAny () {
+    return "admin **";
+  }
+
+  @GetMapping("/user")
+  public String user () {
+    return "user";
+  }
 }
