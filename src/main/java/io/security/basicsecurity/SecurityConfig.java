@@ -12,6 +12,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 @Configuration
 @EnableWebSecurity
@@ -49,6 +52,8 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
     http
       .authorizeHttpRequests((authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
+        //        .requestMatchers("/denied")
+        //        .permitAll()
         .requestMatchers("/user")
         .hasRole("USER")
         .requestMatchers("/admin/pay")
@@ -64,12 +69,13 @@ public class SecurityConfig {
         .usernameParameter("userId")
         .passwordParameter("password")
         //        .loginProcessingUrl("/login_proc")
-        //        .successHandler(new AuthenticationSuccessHandler() {
-        //          @Override
-        //          public void onAuthenticationSuccess (HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        //            System.out.println("authentication = " + authentication.getName());
-        //          }
-        //        })
+        .successHandler((request, response, authentication) -> {
+          RequestCache requestCache = new HttpSessionRequestCache();
+          SavedRequest savedRequest = requestCache.getRequest(request, response);
+          response.sendRedirect(savedRequest
+            .getRedirectUrl()
+            .isEmpty() ? "/home" : savedRequest.getRedirectUrl());
+        })
         .failureHandler((request, response, exception) -> {
           System.out.println("exception = " + exception.getMessage());
           response.sendRedirect("/");
@@ -94,6 +100,13 @@ public class SecurityConfig {
         .maximumSessions(1)
         .maxSessionsPreventsLogin(false)
         .expiredUrl("/login"))
+      .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
+        .authenticationEntryPoint((request, response, authException) -> {
+          response.sendRedirect("/login");
+        })
+        .accessDeniedHandler((request, response, accessDeniedException) -> {
+          response.sendRedirect("/denied");
+        }))
     ;
 
     return http.build();

@@ -30,4 +30,9 @@ public class MainController {
   public String user () {
     return "user";
   }
+
+  @GetMapping("/denied")
+  public String denied () {
+    return "denied";
+  }
 }
