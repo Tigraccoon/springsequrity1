@@ -1,14 +1,12 @@
 package io.security.basicsecurity;
 
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,8 +17,8 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-  @Autowired
-  UserDetailsService userDetailsService;
+  //  @Autowired
+  //  UserDetailsService userDetailsService;
 
   @Bean
   public UserDetailsManager setInMemoryUsers () {
@@ -92,18 +90,18 @@ public class SecurityConfig {
         .logoutSuccessHandler((request, response, authentication) -> response.sendRedirect("/login"))
         .deleteCookies("remember-me")
         .permitAll())
-      .rememberMe(httpSecurityRememberMeConfigurer -> httpSecurityRememberMeConfigurer
-        .rememberMeParameter("remember")
-        .tokenValiditySeconds(3600)
-        .userDetailsService(userDetailsService))
+      //      .rememberMe(httpSecurityRememberMeConfigurer -> httpSecurityRememberMeConfigurer
+      //        .rememberMeParameter("remember")
+      //        .tokenValiditySeconds(3600)
+      //        .userDetailsService(userDetailsService))
       .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
         .maximumSessions(1)
         .maxSessionsPreventsLogin(false)
         .expiredUrl("/login"))
       .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
-        .authenticationEntryPoint((request, response, authException) -> {
-          response.sendRedirect("/login");
-        })
+        //        .authenticationEntryPoint((request, response, authException) -> {
+        //          response.sendRedirect("/login");
+        //        })
         .accessDeniedHandler((request, response, accessDeniedException) -> {
           response.sendRedirect("/denied");
         }))
