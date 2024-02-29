@@ -109,4 +109,18 @@ public class SecurityConfig {
 
     return http.build();
   }
+
+  //  @Bean
+  //  @Order(1)
+  //  public SecurityFilterChain testFilterChain (HttpSecurity http) throws Exception {
+  //    http
+  //      .securityMatcher("/test-url")
+  //      .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry -> authorizationManagerRequestMatcherRegistry
+  //        .anyRequest()
+  //        .hasRole("TEST_ROLE"))
+  //      .build()
+  //    ;
+  //
+  //    return http.build();
+  //  }
 }
